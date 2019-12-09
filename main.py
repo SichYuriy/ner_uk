@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import Response
 from flask import request
+import os
 
 import json
 from api import name_extracting_service
@@ -65,4 +66,5 @@ def extract_all_uk():
 
 
 if __name__ == '__main__':
-    app.run()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
