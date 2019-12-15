@@ -17,7 +17,6 @@ class VesumService:
         return client[DB_NAME]['vesum-entry'].find({'word': word_form})
 
     def init_vesum(self):
-        print('check')
         if self.find_by_word_form('ящурні').count() > 0:
             return
         self.refresh_dictionary()
