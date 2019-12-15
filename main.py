@@ -9,7 +9,10 @@ from api import person_extracting_service
 from api import date_extracting_service
 from api import location_extracting_service
 
+from vesum import vesum_service
+
 app = Flask(__name__)
+vesum_service.init_vesum()
 
 
 @app.route("/")
@@ -63,6 +66,12 @@ def extract_all_uk():
         article_matches.extend(location_matches[i].as_json)
         dto.append(article_matches)
     return Response(json.dumps(dto), mimetype='application/json')
+
+
+@app.route('/refresh-dictionary', methods=['PUT'])
+def refresh_dictionary():
+    vesum_service.refresh_dictionary(request.args.get('dictionary_url'))
+    return 'Refreshed'
 
 
 if __name__ == '__main__':

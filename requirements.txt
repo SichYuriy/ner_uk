@@ -2,3 +2,4 @@ git+git://github.com/kmike/pymorphy2.git#egg=pymorphy2
 pymorphy2-dicts-uk
 pymongo >= 2.1
 flask >= 1.0.2
+requests = 2.22.0
