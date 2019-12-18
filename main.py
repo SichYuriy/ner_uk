@@ -24,7 +24,7 @@ def hello():
 def extract_names_uk():
     articles = json.loads(request.data)
     articles_matches = name_extracting_service.extract_names(articles)
-    dto = list(map(lambda matches: matches.as_json, articles_matches))
+    dto = to_dto(articles_matches, request.args.get('extract_tokens'))
     return Response(json.dumps(dto), mimetype='application/json')
 
 
@@ -32,7 +32,7 @@ def extract_names_uk():
 def extract_persons_uk():
     articles = json.loads(request.data)
     articles_matches = person_extracting_service.extract_persons(articles)
-    dto = list(map(lambda matches: matches.as_json, articles_matches))
+    dto = to_dto(articles_matches, request.args.get('extract_tokens'))
     return Response(json.dumps(dto), mimetype='application/json')
 
 
@@ -40,7 +40,7 @@ def extract_persons_uk():
 def extract_dates_uk():
     articles = json.loads(request.data)
     articles_matches = date_extracting_service.extract_dates(articles)
-    dto = list(map(lambda matches: matches.as_json, articles_matches))
+    dto = to_dto(articles_matches, request.args.get('extract_tokens'))
     return Response(json.dumps(dto), mimetype='application/json')
 
 
@@ -48,7 +48,7 @@ def extract_dates_uk():
 def extract_locations_uk():
     articles = json.loads(request.data)
     articles_matches = location_extracting_service.extract_locations(articles)
-    dto = list(map(lambda matches: matches.as_json, articles_matches))
+    dto = to_dto(articles_matches, request.args.get('extract_tokens'))
     return Response(json.dumps(dto), mimetype='application/json')
 
 
@@ -61,10 +61,14 @@ def extract_all_uk():
     dto = []
     for i in range(len(person_matches)):
         article_matches = []
-        article_matches.extend(person_matches[i].as_json)
-        article_matches.extend(date_matches[i].as_json)
-        article_matches.extend(location_matches[i].as_json)
-        dto.append(article_matches)
+        article_matches.extend(person_matches[i][0].as_json)
+        article_matches.extend(date_matches[i][0].as_json)
+        article_matches.extend(location_matches[i][0].as_json)
+        if request.args.get('extract_tokens'):
+            item = {'matches': article_matches, 'tokens': list(map(lambda token: token.as_json(), person_matches[i][1]))}
+        else:
+            item = {'matches': article_matches}
+        dto.append(item)
     return Response(json.dumps(dto), mimetype='application/json')
 
 
@@ -72,6 +76,16 @@ def extract_all_uk():
 def refresh_dictionary():
     vesum_service.refresh_dictionary(request.args.get('dictionary_url'))
     return 'Refreshed'
+
+
+def to_dto(articles_matches, extract_tokens):
+    if extract_tokens:
+        return list(map(
+            lambda matches: {'matches': matches[0].as_json,
+                             'tokens': list(map(lambda token: token.as_json(), matches[1]))},
+            articles_matches))
+    else:
+        return {'matches': list(map(lambda matches: matches[0].as_json, articles_matches))}
 
 
 if __name__ == '__main__':

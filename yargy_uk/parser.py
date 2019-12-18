@@ -282,7 +282,7 @@ class Parser(object):
             chart
             if all
             else chart.last_column
-        ).matches(self.rule)
+        ).matches(self.rule), chart.tokens
 
     def extract(self, text, all=True):
         states = self.matches(text, all=all)
@@ -290,10 +290,10 @@ class Parser(object):
         return prepare_matches(trees)
 
     def findall(self, text):
-        states = self.matches(text)
+        states, tokens = self.matches(text)
         trees = prepare_trees(states)
         trees = sorted(trees)
-        return prepare_resolved_matches(trees)
+        return prepare_resolved_matches(trees), tokens
 
     def find(self, text):
         for match in self.findall(text):

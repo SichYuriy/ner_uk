@@ -30,6 +30,12 @@ class Token(Record):
             tag
         )
 
+    def as_json(self):
+        return {
+            'type': self.type,
+            'value': self.value
+        }
+
 
 def is_token(item):
     return isinstance(item, Token)
@@ -64,6 +70,13 @@ class MorphToken(Token):
             self.value, self.span, self.type,
             forms
         )
+
+    def as_json(self):
+        return {
+            'type': self.type,
+            'value': self.value,
+            'vesum_records': list(map(lambda record: {'mainForm': record['mainForm'], 'word': record['word'], 'tags': record['tags']}, self.vesum_records))
+        }
 
 
 def is_morph_token(item):
@@ -101,6 +114,13 @@ class MorphTagToken(MorphToken, TagToken):
             self.value, self.span, self.type,
             self.tag, forms
         )
+
+    def as_json(self):
+        return {
+            'type': self.type,
+            'value': self.value,
+            'vesum_records': list(map(lambda record: {'mainForm': record['mainForm'], 'word': record['word'], 'tags': record['tags']}, self.vesum_records))
+        }
 
 
 def format_tokens(tokens):

@@ -87,8 +87,8 @@ class Extractor(object):
 
     def __call__(self, text):
         text = normalize_text(text)
-        matches = self.parser.findall(text)
-        return Matches(text, matches)
+        matches, tokens = self.parser.findall(text)
+        return Matches(text, matches), tokens
 
 
 class NamesExtractor(Extractor):
